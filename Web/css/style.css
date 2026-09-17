@@ -301,40 +301,141 @@ header.visivel {
 *************************************************/
 
 #sociedades {
-    background-color: var(--cor-fundo-escuro);
+    position: relative;
+    overflow: hidden;
     color: var(--cor-texto-claro);
     text-align: center;
+    background-color: var(--cor-fundo-escuro);
+}
+
+.sociedades-fundo {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    transform: scale(1.05);
+    filter: blur(3px);
+    transition: opacity 0.5s ease, transform 0.9s ease;
+}
+
+.sociedades-fundo.trocando {
+    opacity: 0;
+    transform: scale(1.09);
+}
+
+#sociedades::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        rgba(4, 25, 18, 0.78),
+        rgba(4, 25, 18, 0.92)
+    );
+    z-index: 1;
+}
+
+.sociedades-interface {
+    position: relative;
+    z-index: 2;
+}
+
+.menu-sociedades {
+    max-width: 700px;
+    margin: 50px auto 0;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.aba-sociedade {
+    position: relative;
+    padding: 15px 5px;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.55);
+    font-family: var(--fonte-texto);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.35s ease;
+}
+
+.aba-sociedade:hover {
+    color: var(--cor-texto-claro);
+}
+
+.aba-sociedade::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -1px;
+    width: 0;
+    height: 3px;
+    background-color: var(--cor-destaque);
+    transform: translateX(-50%);
+    transition: width 0.35s ease;
+}
+
+.aba-sociedade.ativo {
+    color: var(--cor-destaque);
+}
+
+.aba-sociedade.ativo::after {
+    width: 100%;
 }
 
 .containersociedades {
-    max-width: 1100px;
-    margin: 50px auto 0;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
+    max-width: 900px;
+    min-height: 350px;
+    margin: 40px auto 0;
+    padding: 45px 55px;
+    background-color: rgba(4, 30, 21, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 18px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    overflow: hidden;
 }
 
-.containersociedades article {
-    position: relative;
-    padding: 40px 25px;
-    background-color: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(143, 203, 114, 0.45);
-    border-radius: 14px;
-    cursor: pointer;
-    transition: transform 0.3s ease,
-                background-color 0.3s ease,
-                border-color 0.3s ease;
+.conteudo-sociedade {
+    display: none;
 }
 
-.containersociedades article:hover {
-    transform: translateY(-6px);
-    background-color: rgba(255, 255, 255, 0.07);
-    border-color: var(--cor-destaque);
+.conteudo-sociedade.ativo {
+    display: block;
 }
 
-.containersociedades h3 {
-    margin-bottom: 15px;
+.conteudo-sociedade h3 {
+    margin-bottom: 25px;
     color: var(--cor-destaque);
+    font-size: 2rem;
+}
+
+.conteudo-sociedade p {
+    max-width: 780px;
+    margin: 0 auto;
+    line-height: 1.9;
+    white-space: pre-line;
+}
+
+
+/*********** ANIMAÇÕES SOCIEDADES ***************/
+
+.entrar-direita {
+    animation: entrarDireita 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.entrar-esquerda {
+    animation: entrarEsquerda 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.sair-esquerda {
+    animation: sairEsquerda 0.5s ease forwards;
+}
+
+.sair-direita {
+    animation: sairDireita 0.5s ease forwards;
 }
 
 
@@ -436,6 +537,61 @@ footer {
 
 
 /*************************************************
+    KEYFRAMES
+*************************************************/
+
+/*Entrada e Saida Conteudo Sociedade*/
+@keyframes entrarDireita {
+    from {
+        opacity: 0;
+        transform: translateX(80px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes entrarEsquerda {
+    from {
+        opacity: 0;
+        transform: translateX(-80px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes sairEsquerda {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateX(-45px);
+    }
+}
+
+@keyframes sairDireita {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateX(45px);
+    }
+}
+
+
+
+/*************************************************
     RESPONSIVIDADE
 *************************************************/
 
@@ -501,6 +657,30 @@ footer {
 
     .simbolo-ipb {
         width: 150px;
+    }
+
+    .menu-sociedades {
+        gap: 25px;
+        overflow-x: auto;
+        justify-content: flex-start;
+        padding-bottom: 5px;
+    }
+
+    .aba-sociedade {
+        flex-shrink: 0;
+    }
+
+    .containersociedades {
+        min-height: 450px;
+        padding: 30px 20px;
+    }
+
+    .conteudo-sociedade h3 {
+        font-size: 1.7rem;
+    }
+
+    .conteudo-sociedade p {
+        line-height: 1.8;
     }
 
     footer {

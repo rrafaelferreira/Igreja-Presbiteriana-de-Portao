@@ -1,44 +1,111 @@
-const inicio = document.querySelector("#inicio");
-const header = document.querySelector("header");
-const botaoMenu = document.querySelector(".menu-mobile");
-const navbar = document.querySelector("#navbar");
-const linksMenu = document.querySelectorAll("#navbar a");
+const abasSociedades = document.querySelectorAll(".aba-sociedade");
+const conteudosSociedades = document.querySelectorAll(".conteudo-sociedade");
+const fundoSociedades = document.querySelector(".sociedades-fundo");
 
-const observar = new IntersectionObserver((entries) => {
-    const entry = entries[0];
-
-    if (entry.isIntersecting) {
-        header.classList.remove("visivel");
-
-        // Garante que o menu mobile esteja fechado ao voltar para o início
-        navbar.classList.remove("aberto");
-        botaoMenu.textContent = "☰";
-    } else {
-        header.classList.add("visivel");
-    }
+let indiceAtual = [...abasSociedades].findIndex((aba) => {
+    return aba.classList.contains("ativo");
 });
 
-observar.observe(inicio);
+let emTransicao = false;
 
 
-// Menu hambúrguer no mobile
+// Define a imagem inicial
 
-botaoMenu.addEventListener("click", () => {
-    const menuAberto = navbar.classList.toggle("aberto");
+const abaInicial = abasSociedades[indiceAtual];
 
-    if (menuAberto) {
-        botaoMenu.textContent = "✕";
-    } else {
-        botaoMenu.textContent = "☰";
-    }
-});
+fundoSociedades.style.backgroundImage =
+    `url("${abaInicial.dataset.imagem}")`;
 
 
-// Garante que após clicar em um dos links o menu seja fechado
+// Navegação entre as sociedades
 
-linksMenu.forEach((link) => {
-    link.addEventListener("click", () => {
-        navbar.classList.remove("aberto");
-        botaoMenu.textContent = "☰";
+abasSociedades.forEach((aba, novoIndice) => {
+
+    aba.addEventListener("click", () => {
+
+        if (novoIndice === indiceAtual || emTransicao) {
+            return;
+        }
+
+        emTransicao = true;
+
+        const indoParaDireita = novoIndice > indiceAtual;
+
+        const conteudoAtual = conteudosSociedades[indiceAtual];
+
+        const sociedadeDestino = aba.dataset.sociedade;
+
+        const novoConteudo = document.querySelector(
+            `#${sociedadeDestino}`
+        );
+
+
+        // Atualiza a aba ativa
+
+        abasSociedades.forEach((item) => {
+            item.classList.remove("ativo");
+        });
+
+        aba.classList.add("ativo");
+
+
+        // Anima a saída do conteúdo atual
+
+        conteudoAtual.classList.add(
+            indoParaDireita
+                ? "sair-esquerda"
+                : "sair-direita"
+        );
+
+
+        // Começa a transição da imagem
+
+        fundoSociedades.classList.add("trocando");
+
+
+        setTimeout(() => {
+
+            fundoSociedades.style.backgroundImage =
+                `url("${aba.dataset.imagem}")`;
+
+            fundoSociedades.classList.remove("trocando");
+
+        }, 400);
+
+
+        // Troca o conteúdo
+
+        setTimeout(() => {
+
+            conteudoAtual.classList.remove(
+                "ativo",
+                "sair-esquerda",
+                "sair-direita"
+            );
+
+
+            novoConteudo.classList.add(
+                "ativo",
+                indoParaDireita
+                    ? "entrar-direita"
+                    : "entrar-esquerda"
+            );
+
+
+            setTimeout(() => {
+
+                novoConteudo.classList.remove(
+                    "entrar-direita",
+                    "entrar-esquerda"
+                );
+
+                indiceAtual = novoIndice;
+                emTransicao = false;
+                
+            }, 900);
+
+        }, 500);
+
     });
+
 });
